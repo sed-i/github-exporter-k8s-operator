@@ -1,0 +1,69 @@
+# Copyright 2025 Canonical Ltd.
+# See LICENSE file for licensing details.
+[project]
+name = "github-exporter"
+version = "0.0"
+requires-python = "~=3.8"
+
+dependencies = [
+  "ops > 2.5.0",
+  # prometheus_scrape.v0
+  "cosl>=0.0.53",
+]
+
+[project.optional-dependencies]
+dev = [
+  # Linting
+  "ruff",
+  "codespell",
+  # Static
+  "pyright",
+  # Unit
+  "pytest",
+  "coverage[toml]",
+  "ops[testing]",
+  # Integration
+  "pytest", # trying to remove the pinning TODO: remove this comment
+  "sh",
+]
+
+# Testing tools configuration
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+
+# Linting tools configuration
+[tool.ruff]
+line-length = 99
+exclude = ["__pycache__", "*.egg_info"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "C", "N", "R", "D", "I001"]
+# Ignore D107 Missing docstring in __init__
+ignore = ["C901", "D107", "E501", "RET504"]
+
+[tool.ruff.lint.per-file-ignores]
+# D100, D101, D102, D103: Ignore missing docstrings in tests
+"tests/*" = ["D100","D101","D102","D103"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# Static analysis tools configuration
+[tool.pyright]
+extraPaths = ["lib"]
+pythonVersion = "3.8"
+pythonPlatform = "All"
+typeCheckingMode = "basic" # we'll work up to strict
+reportIncompatibleMethodOverride = false
+reportImportCycles = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--tb=native --verbose --capture=no --log-cli-level=INFO"
+
+[tool.codespell]
+skip = ".git,.tox,build,venv*"
+ignore-words-list = "assertIn"

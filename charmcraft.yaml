@@ -1,0 +1,69 @@
+name: github-exporter-k8s
+
+type: charm
+title: Github exporter
+
+summary: Prometheus exporter for github metrics
+
+
+description: |
+  The workload (github-exporter) exposes basic metrics for your repositories from the GitHub API,
+  to a Prometheus compatible endpoint.
+
+platforms:
+  ubuntu@24.04:amd64:
+
+
+config:
+  options:
+    orgs:
+      type: string
+      description: |
+        If supplied, the exporter will enumerate all repositories for that organization.
+    repos:
+      type: string
+      description: |
+        If supplied, The repos you wish to monitor, expected in the format "user/repo1, user/repo2".
+        Can be across different Github users/orgs.
+    users:
+      type: string
+      description: |
+        If supplied, the exporter will enumerate all repositories for that users.
+        Expected in the format "user1, user2".
+    github_token:
+      type: string
+      description: |
+        If supplied, enables the user to supply a github authentication token that allows the API to be queried more often.
+        Optional, but recommended.
+
+
+containers:
+  github-exporter:
+    resource: github-exporter-image
+
+
+resources:
+  github-exporter-image:
+    type: oci-image
+    upstream-source: githubexporter/github-exporter:1.3.1
+    description: |
+      OCI image for the 'github-exporter' container
+      https://hub.docker.com/r/githubexporter/github-exporter/tags
+
+
+provides:
+  metrics-endpoint:
+    interface: prometheus_scrape
+
+
+parts:
+  charm:
+    source: .
+    plugin: uv
+    build-packages:
+      - git
+    build-snaps: 
+      - astral-uv
+    override-build: |
+      craftctl default
+      #git describe --always > $CRAFT_PART_INSTALL/version
