@@ -76,6 +76,7 @@ class GithubExporterK8SCharm(ops.CharmBase):
             }],
             external_url=socket.getfqdn(),
         )
+        scraping.set_scrape_job_spec()
 
 
 if __name__ == "__main__":  # pragma: nocover
